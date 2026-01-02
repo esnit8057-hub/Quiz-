@@ -1,0 +1,3218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBC Quiz Arena - User Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: linear-gradient(135deg, #0a0e27 0%, #020515 100%);
+            --card-bg: rgba(15, 20, 40, 0.8);
+            --neon-blue: #00FFFF;
+            --neon-purple: #FF00FF;
+            --neon-pink: #FF1493;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c1ec;
+            --success: #00ff88;
+            --danger: #ff4757;
+            --warning: #ffa502;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Particle Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Neon Glow Effects */
+        .neon-border {
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        .neon-border-purple {
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3), inset 0 0 10px rgba(255, 0, 255, 0.1);
+        }
+
+        .glow-blue {
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .glow-purple {
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        /* Auth Container */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-footer a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* App Container */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-logo {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--neon-blue);
+        }
+
+        .premium-btn {
+            background: linear-gradient(45deg, gold, orange);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .nav-item.active {
+            color: var(--neon-blue);
+        }
+
+        .nav-item.active i {
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Section */
+        .welcome-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--neon-blue);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .action-card i {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: var(--neon-blue);
+        }
+
+        .announcement-banner {
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Quizzes Section */
+        .quiz-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .quiz-tab {
+            padding: 10px 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-tab.active {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+        }
+
+        .quiz-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-card.live {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .quiz-card.upcoming {
+            border-color: var(--warning);
+            box-shadow: 0 0 20px rgba(255, 165, 2, 0.3);
+        }
+
+        .quiz-card.ended {
+            opacity: 0.7;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .quiz-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .quiz-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .quiz-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .quiz-status.live {
+            background: rgba(0, 255, 255, 0.2);
+            color: var(--neon-blue);
+        }
+
+        .quiz-status.upcoming {
+            background: rgba(255, 165, 2, 0.2);
+            color: var(--warning);
+        }
+
+        .quiz-status.ended {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        /* Quiz Gameplay */
+        .quiz-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-bg);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            width: 150px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            transition: width 0.3s ease;
+        }
+
+        .timer-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .timer-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--neon-blue) 0deg, rgba(255, 255, 255, 0.1) 0deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .question-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: var(--neon-blue);
+        }
+
+        .option.selected {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: var(--neon-blue);
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: var(--danger);
+        }
+
+        .option-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .lifelines-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .lifeline {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            flex: 1;
+            margin: 0 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lifeline:hover {
+            background: rgba(255, 0, 255, 0.1);
+            border-color: var(--neon-purple);
+        }
+
+        .lifeline.used {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .lifeline i {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: var(--neon-purple);
+        }
+
+        .lifeline-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Result Screen */
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .result-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .result-stat {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 5px;
+        }
+
+        .result-stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-tab {
+            padding: 10px 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-tab.active {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .leaderboard-item {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-rank {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .leaderboard-rank.gold {
+            background: linear-gradient(45deg, gold, orange);
+            color: white;
+        }
+
+        .leaderboard-rank.silver {
+            background: linear-gradient(45deg, #e0e0e0, #b0b0b0);
+            color: white;
+        }
+
+        .leaderboard-rank.bronze {
+            background: linear-gradient(45deg, #cd7f32, #8b4513);
+            color: white;
+        }
+
+        .leaderboard-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .premium-badge {
+            background: linear-gradient(45deg, gold, orange);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .leaderboard-score {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--neon-blue);
+        }
+
+        /* Wallet Section */
+        .wallet-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .wallet-balance {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .wallet-amount {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .withdraw-btn {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            padding: 12px 30px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .withdraw-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .withdraw-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .transaction-history {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .transaction-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .transaction-amount.credit {
+            color: var(--success);
+        }
+
+        .transaction-amount.debit {
+            color: var(--danger);
+        }
+
+        /* Profile Section */
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .profile-avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--neon-blue);
+        }
+
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 3px solid var(--card-bg);
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .profile-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 5px;
+        }
+
+        .profile-stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .profile-form {
+            text-align: left;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .logout-btn:hover {
+            background: #ff3838;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .premium-features {
+            margin: 20px 0;
+        }
+
+        .premium-feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .premium-feature i {
+            font-size: 24px;
+            color: gold;
+        }
+
+        .premium-price {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .premium-price span {
+            font-size: 36px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 250px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--neon-blue);
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .toast.success i {
+            color: var(--success);
+        }
+
+        .toast.error i {
+            color: var(--danger);
+        }
+
+        .toast.warning i {
+            color: var(--warning);
+        }
+
+        .toast.info i {
+            color: var(--neon-blue);
+        }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-close {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Auth Container -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-card">
+            <h2 class="auth-title">KBC Quiz Arena</h2>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password">
+                </div>
+                <button class="btn btn-primary" id="loginBtn">Login</button>
+                <div class="auth-footer">
+                    Don't have an account? <a href="#" id="showSignupBtn">Sign Up</a>
+                </div>
+                <div class="auth-footer">
+                    <a href="#" id="forgotPasswordBtn">Forgot Password?</a>
+                </div>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label" for="signupName">Name</label>
+                    <input type="text" id="signupName" class="form-input" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" class="form-input" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" class="form-input" placeholder="Enter your password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password">
+                </div>
+                <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+                <div class="auth-footer">
+                    Already have an account? <a href="#" id="showLoginBtn">Login</a>
+                </div>
+            </div>
+            
+            <!-- Reset Password Form -->
+            <div id="resetForm" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label" for="resetEmail">Email</label>
+                    <input type="email" id="resetEmail" class="form-input" placeholder="Enter your email">
+                </div>
+                <button class="btn btn-primary" id="resetBtn">Reset Password</button>
+                <div class="auth-footer">
+                    <a href="#" id="backToLoginBtn">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container" id="appContainer">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <div class="app-logo">KBC Quiz Arena</div>
+            <div class="user-info">
+                <button class="premium-btn" id="premiumBtn">
+                    <i class="fas fa-gem"></i> Premium
+                </button>
+                <img src="https://picsum.photos/seed/avatar/40/40.jpg" alt="User Avatar" class="user-avatar" id="userAvatar">
+            </div>
+        </div>
+
+        <!-- Content Sections -->
+        <!-- Home Section -->
+        <div class="content-section active" id="homeSection">
+            <div class="welcome-card">
+                <h2 class="welcome-title glow-blue">Welcome, <span id="userName">User</span> 👋</h2>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-coins" style="color: gold;"></i>
+                        <div>
+                            <div class="stat-value" id="userCoins">0</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Coins</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-trophy" style="color: gold;"></i>
+                        <div>
+                            <div class="stat-value" id="userScore">0</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Score</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="action-card" id="startQuizBtn">
+                        <i class="fas fa-play-circle"></i>
+                        <div>Start Quiz</div>
+                    </div>
+                    <div class="action-card" id="leaderboardBtn">
+                        <i class="fas fa-medal"></i>
+                        <div>Leaderboard</div>
+                    </div>
+                    <div class="action-card" id="walletBtn">
+                        <i class="fas fa-wallet"></i>
+                        <div>Wallet</div>
+                    </div>
+                    <div class="action-card" id="profileBtn">
+                        <i class="fas fa-user-circle"></i>
+                        <div>Profile</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="announcement-banner">
+                <h3 style="margin-bottom: 10px;">📢 Announcements</h3>
+                <div id="announcements">Loading announcements...</div>
+            </div>
+        </div>
+
+        <!-- Quizzes Section -->
+        <div class="content-section" id="quizzesSection">
+            <div class="quiz-tabs">
+                <div class="quiz-tab active" data-tab="live">Live</div>
+                <div class="quiz-tab" data-tab="upcoming">Upcoming</div>
+                <div class="quiz-tab" data-tab="all">All</div>
+            </div>
+            
+            <div class="quiz-list" id="quizList">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="content-section" id="leaderboardSection">
+            <div class="leaderboard-tabs">
+                <div class="leaderboard-tab active" data-type="global">Global</div>
+                <div class="leaderboard-tab" data-type="tournament">Tournament</div>
+            </div>
+            
+            <div class="leaderboard-list" id="leaderboardList">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Wallet Section -->
+        <div class="content-section" id="walletSection">
+            <div class="wallet-card">
+                <div class="wallet-balance">Available Balance</div>
+                <div class="wallet-amount" id="walletBalance">0 Coins</div>
+                <button class="withdraw-btn" id="withdrawBtn">Withdraw Coins</button>
+            </div>
+            
+            <div class="transaction-history">
+                <h3 class="section-title">
+                    <i class="fas fa-history"></i> Transaction History
+                </h3>
+                <div class="transaction-list" id="transactionList">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="content-section" id="profileSection">
+            <div class="profile-card">
+                <div class="profile-avatar-container">
+                    <img src="https://picsum.photos/seed/avatar/120/120.jpg" alt="Profile Avatar" class="profile-avatar" id="profileAvatar">
+                    <div class="avatar-edit-btn">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <h2 class="profile-name" id="profileName">User Name</h2>
+                <div class="profile-email" id="profileEmail">user@example.com</div>
+                
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value" id="profileCoins">0</div>
+                        <div class="profile-stat-label">Coins</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value" id="profileScore">0</div>
+                        <div class="profile-stat-label">Score</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value" id="profileQuizzes">0</div>
+                        <div class="profile-stat-label">Quizzes</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-card profile-form">
+                <h3 class="section-title">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </h3>
+                <div class="form-group">
+                    <label class="form-label" for="editName">Name</label>
+                    <input type="text" id="editName" class="form-input" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editAvatar">Avatar URL</label>
+                    <input type="text" id="editAvatar" class="form-input" placeholder="Enter avatar URL">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editTheme">Theme</label>
+                    <select id="editTheme" class="form-input">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                    <button class="btn logout-btn" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Gameplay Container -->
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-header">
+                <div class="quiz-progress">
+                    <span id="questionNumber">1/15</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 6.67%;"></div>
+                    </div>
+                </div>
+                <div class="timer-container">
+                    <div class="timer-circle" id="timerCircle">30</div>
+                </div>
+            </div>
+            
+            <div class="lifelines-container">
+                <div class="lifeline" id="fiftyFiftyLifeline">
+                    <i class="fas fa-divide"></i>
+                    <div class="lifeline-text">50:50</div>
+                </div>
+                <div class="lifeline" id="audiencePollLifeline">
+                    <i class="fas fa-chart-pie"></i>
+                    <div class="lifeline-text">Audience Poll</div>
+                </div>
+                <div class="lifeline" id="skipLifeline">
+                    <i class="fas fa-forward"></i>
+                    <div class="lifeline-text">Skip</div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text" id="questionText">Loading question...</div>
+                <div class="options-container" id="optionsContainer">
+                    <!-- Options will be dynamically added -->
+                </div>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <h2 class="result-title">Quiz Completed!</h2>
+                <div class="result-stats">
+                    <div class="result-stat">
+                        <div class="result-stat-value" id="correctAnswers">0</div>
+                        <div class="result-stat-label">Correct Answers</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value" id="totalScore">0</div>
+                        <div class="result-stat-label">Total Score</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value" id="coinsEarned">0</div>
+                        <div class="result-stat-label">Coins Earned</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value" id="rank">-</div>
+                        <div class="result-stat-label">Rank</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="shareResultBtn">Share Result</button>
+                <button class="btn btn-secondary" id="backToHomeBtn">Back to Home</button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-section="home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" data-section="quizzes">
+                <i class="fas fa-gamepad"></i>
+                <span>Quizzes</span>
+            </div>
+            <div class="nav-item" data-section="leaderboard">
+                <i class="fas fa-trophy"></i>
+                <span>Leaderboard</span>
+            </div>
+            <div class="nav-item" data-section="wallet">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </div>
+            <div class="nav-item" data-section="profile">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Modal -->
+    <div class="modal" id="premiumModal">
+        <div class="modal-content">
+            <div class="modal-close" id="closePremiumModal">
+                <i class="fas fa-times"></i>
+            </div>
+            <h2 class="modal-title">Premium Plan</h2>
+            
+            <div class="premium-features">
+                <div class="premium-feature">
+                    <i class="fas fa-ad"></i>
+                    <div>
+                        <div style="font-weight: 600;">Ad-Free Experience</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">Enjoy uninterrupted quizzes</div>
+                    </div>
+                </div>
+                <div class="premium-feature">
+                    <i class="fas fa-crown"></i>
+                    <div>
+                        <div style="font-weight: 600;">Gold VIP Badge</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">Stand out in leaderboards</div>
+                    </div>
+                </div>
+                <div class="premium-feature">
+                    <i class="fas fa-star"></i>
+                    <div>
+                        <div style="font-weight: 600;">Glowing Avatar Border</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">Premium profile customization</div>
+                    </div>
+                </div>
+                <div class="premium-feature">
+                    <i class="fas fa-gift"></i>
+                    <div>
+                        <div style="font-weight: 600;">Exclusive Premium Quizzes</div>
+                        <div style="font-size: 14px; color: var(--text-secondary);">Access special tournaments</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="premium-price">
+                Only <span>₹199</span> Lifetime
+            </div>
+            
+            <div class="qr-code" id="qrCode">
+                QR Code Loading...
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="upiTransactionId">UPI Transaction ID</label>
+                <input type="text" id="upiTransactionId" class="form-input" placeholder="Enter UPI Transaction ID">
+            </div>
+            
+            <button class="btn btn-primary" id="submitPremiumBtn">Submit for Verification</button>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-close" id="closeWithdrawModal">
+                <i class="fas fa-times"></i>
+            </div>
+            <h2 class="modal-title">Withdraw Coins</h2>
+            
+            <div class="form-group">
+                <label class="form-label" for="withdrawAmount">Amount (Coins)</label>
+                <input type="number" id="withdrawAmount" class="form-input" placeholder="Enter amount to withdraw">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="withdrawUPI">UPI ID</label>
+                <input type="text" id="withdrawUPI" class="form-input" placeholder="Enter your UPI ID">
+            </div>
+            
+            <div style="background: rgba(255, 165, 2, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;">Conversion Rate</div>
+                <div style="font-size: 18px; font-weight: 600;">100 Coins = ₹1</div>
+            </div>
+            
+            <button class="btn btn-primary" id="submitWithdrawBtn">Submit Withdrawal Request</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+    
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+  apiKey: "AIzaSyBnlYXfrY6G0FMEJaCqnOmQUev6vb9Jjfc",
+  authDomain: "video-downloader-93347.firebaseapp.com",
+  projectId: "video-downloader-93347",
+  storageBucket: "video-downloader-93347.firebasestorage.app",
+  messagingSenderId: "608042614326",
+  appId: "1:608042614326:web:9517e99998b6cb0e4e6297"
+};
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Initialize Particles
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 50,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: ['#00FFFF', '#FF00FF']
+                },
+                shape: {
+                    type: 'circle'
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#00FFFF',
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        line_linked: {
+                            opacity: 0.5
+                        }
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        // Global Variables
+        let currentUser = null;
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let quizQuestions = [];
+        let quizScore = 0;
+        let correctAnswersCount = 0;
+        let timerInterval = null;
+        let timeLeft = 30;
+        let lifelinesUsed = {
+            fiftyFifty: false,
+            audiencePoll: false,
+            skip: false
+        };
+
+        // DOM Elements
+        const authContainer = document.getElementById('authContainer');
+        const appContainer = document.getElementById('appContainer');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const resetForm = document.getElementById('resetForm');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultContainer = document.getElementById('resultContainer');
+        const premiumModal = document.getElementById('premiumModal');
+        const withdrawModal = document.getElementById('withdrawModal');
+        const toastContainer = document.getElementById('toastContainer');
+
+        // Auth Event Listeners
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('signupBtn').addEventListener('click', signup);
+        document.getElementById('resetBtn').addEventListener('click', resetPassword);
+        document.getElementById('showSignupBtn').addEventListener('click', () => {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+        });
+        document.getElementById('showLoginBtn').addEventListener('click', () => {
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'block';
+        });
+        document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+            loginForm.style.display = 'none';
+            resetForm.style.display = 'block';
+        });
+        document.getElementById('backToLoginBtn').addEventListener('click', () => {
+            resetForm.style.display = 'none';
+            loginForm.style.display = 'block';
+        });
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // Navigation Event Listeners
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const section = item.getAttribute('data-section');
+                switchSection(section);
+                
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                item.classList.add('active');
+            });
+        });
+
+        // Quick Action Buttons
+        document.getElementById('startQuizBtn').addEventListener('click', () => {
+            switchSection('quizzes');
+            document.querySelector('.nav-item[data-section="quizzes"]').click();
+        });
+        document.getElementById('leaderboardBtn').addEventListener('click', () => {
+            switchSection('leaderboard');
+            document.querySelector('.nav-item[data-section="leaderboard"]').click();
+        });
+        document.getElementById('walletBtn').addEventListener('click', () => {
+            switchSection('wallet');
+            document.querySelector('.nav-item[data-section="wallet"]').click();
+        });
+        document.getElementById('profileBtn').addEventListener('click', () => {
+            switchSection('profile');
+            document.querySelector('.nav-item[data-section="profile"]').click();
+        });
+
+        // Quiz Tabs
+        document.querySelectorAll('.quiz-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabType = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                document.querySelectorAll('.quiz-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                tab.classList.add('active');
+                
+                // Load quizzes based on tab
+                loadQuizzes(tabType);
+            });
+        });
+
+        // Leaderboard Tabs
+        document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabType = tab.getAttribute('data-type');
+                
+                // Update active tab
+                document.querySelectorAll('.leaderboard-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                tab.classList.add('active');
+                
+                // Load leaderboard based on tab
+                loadLeaderboard(tabType);
+            });
+        });
+
+        // Premium Modal
+        document.getElementById('premiumBtn').addEventListener('click', () => {
+            if (currentUser && currentUser.isPremium) {
+                showToast('You already have Premium! 👑', 'info');
+                return;
+            }
+            premiumModal.classList.add('active');
+            loadPremiumQR();
+        });
+        document.getElementById('closePremiumModal').addEventListener('click', () => {
+            premiumModal.classList.remove('active');
+        });
+        document.getElementById('submitPremiumBtn').addEventListener('click', submitPremiumRequest);
+
+        // Withdraw Modal
+        document.getElementById('withdrawBtn').addEventListener('click', () => {
+            if (!currentUser || !currentUser.isPremium) {
+                showToast('Premium feature only!', 'warning');
+                return;
+            }
+            withdrawModal.classList.add('active');
+        });
+        document.getElementById('closeWithdrawModal').addEventListener('click', () => {
+            withdrawModal.classList.remove('active');
+        });
+        document.getElementById('submitWithdrawBtn').addEventListener('click', submitWithdrawRequest);
+
+        // Profile Form
+        document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+
+        // Quiz Gameplay
+        document.getElementById('fiftyFiftyLifeline').addEventListener('click', useFiftyFifty);
+        document.getElementById('audiencePollLifeline').addEventListener('click', useAudiencePoll);
+        document.getElementById('skipLifeline').addEventListener('click', useSkip);
+        document.getElementById('shareResultBtn').addEventListener('click', shareResult);
+        document.getElementById('backToHomeBtn').addEventListener('click', () => {
+            quizContainer.classList.remove('active');
+            switchSection('home');
+            document.querySelector('.nav-item[data-section="home"]').click();
+        });
+
+        // Auth Functions
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showToast('Please enter email and password', 'warning');
+                return;
+            }
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    showToast('Login successful!', 'success');
+                    loadUserData(userCredential.user);
+                })
+                .catch(error => {
+                    handleAuthError(error);
+                });
+        }
+
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!name || !email || !password || !confirmPassword) {
+                showToast('Please fill all fields', 'warning');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', 'warning');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'warning');
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    // Create user profile in database
+                    const user = userCredential.user;
+                    database.ref('users/' + user.uid).set({
+                        name: name,
+                        email: email,
+                        coins: 100, // Starting coins
+                        isPremium: false,
+                        tournamentsJoined: {},
+                        totalScore: 0,
+                        joinedAt: new Date().toISOString(),
+                        avatarURL: `https://picsum.photos/seed/${user.uid}/120/120.jpg`,
+                        theme: 'dark'
+                    });
+                    
+                    showToast('Account created successfully!', 'success');
+                    loadUserData(user);
+                })
+                .catch(error => {
+                    handleAuthError(error);
+                });
+        }
+
+        function resetPassword() {
+            const email = document.getElementById('resetEmail').value;
+            
+            if (!email) {
+                showToast('Please enter your email', 'warning');
+                return;
+            }
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showToast('Password reset email sent!', 'success');
+                    resetForm.style.display = 'none';
+                    loginForm.style.display = 'block';
+                })
+                .catch(error => {
+                    handleAuthError(error);
+                });
+        }
+
+        function logout() {
+            auth.signOut()
+                .then(() => {
+                    showToast('Logged out successfully', 'success');
+                    authContainer.style.display = 'flex';
+                    appContainer.style.display = 'none';
+                    currentUser = null;
+                })
+                .catch(error => {
+                    showToast('Error logging out', 'error');
+                });
+        }
+
+        function handleAuthError(error) {
+            let message = 'An error occurred';
+            
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    message = 'User not found';
+                    break;
+                case 'auth/wrong-password':
+                    message = 'Invalid credentials';
+                    break;
+                case 'auth/email-already-in-use':
+                    message = 'Email already in use';
+                    break;
+                case 'auth/weak-password':
+                    message = 'Password is too weak';
+                    break;
+                case 'auth/invalid-email':
+                    message = 'Invalid email format';
+                    break;
+                case 'auth/network-request-failed':
+                    message = 'Network issue, please try again';
+                    break;
+                default:
+                    message = error.message;
+            }
+            
+            showToast(message, 'error');
+        }
+
+        // Load User Data
+        function loadUserData(user) {
+            database.ref('users/' + user.uid).once('value')
+                .then(snapshot => {
+                    currentUser = snapshot.val();
+                    currentUser.uid = user.uid;
+                    
+                    // Update UI with user data
+                    document.getElementById('userName').textContent = currentUser.name;
+                    document.getElementById('userCoins').textContent = currentUser.coins || 0;
+                    document.getElementById('userScore').textContent = currentUser.totalScore || 0;
+                    document.getElementById('userAvatar').src = currentUser.avatarURL || `https://picsum.photos/seed/${user.uid}/40/40.jpg`;
+                    document.getElementById('profileName').textContent = currentUser.name;
+                    document.getElementById('profileEmail').textContent = currentUser.email;
+                    document.getElementById('profileCoins').textContent = currentUser.coins || 0;
+                    document.getElementById('profileScore').textContent = currentUser.totalScore || 0;
+                    document.getElementById('profileQuizzes').textContent = Object.keys(currentUser.tournamentsJoined || {}).length;
+                    document.getElementById('profileAvatar').src = currentUser.avatarURL || `https://picsum.photos/seed/${user.uid}/120/120.jpg`;
+                    document.getElementById('editName').value = currentUser.name;
+                    document.getElementById('editAvatar').value = currentUser.avatarURL || '';
+                    document.getElementById('editTheme').value = currentUser.theme || 'dark';
+                    
+                    // Update premium button
+                    if (currentUser.isPremium) {
+                        document.getElementById('premiumBtn').innerHTML = '<i class="fas fa-crown"></i> Premium Active 👑';
+                    }
+                    
+                    // Show app container
+                    authContainer.style.display = 'none';
+                    appContainer.style.display = 'block';
+                    
+                    // Load initial data
+                    loadAnnouncements();
+                    loadQuizzes('live');
+                    loadLeaderboard('global');
+                    loadTransactionHistory();
+                })
+                .catch(error => {
+                    showToast('Error loading user data', 'error');
+                });
+        }
+
+        // Switch Section
+        function switchSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').classList.add('active');
+        }
+
+        // Load Announcements
+        function loadAnnouncements() {
+            database.ref('config/announcements').once('value')
+                .then(snapshot => {
+                    const announcements = snapshot.val();
+                    const announcementsContainer = document.getElementById('announcements');
+                    
+                    if (announcements && Object.keys(announcements).length > 0) {
+                        let html = '';
+                        Object.values(announcements).forEach(announcement => {
+                            html += `<div style="margin-bottom: 10px;">${announcement}</div>`;
+                        });
+                        announcementsContainer.innerHTML = html;
+                    } else {
+                        announcementsContainer.innerHTML = 'No announcements at the moment.';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('announcements').innerHTML = 'Failed to load announcements.';
+                });
+        }
+
+        // Load Quizzes
+        function loadQuizzes(type) {
+            const quizList = document.getElementById('quizList');
+            quizList.innerHTML = '<div class="spinner"></div>';
+            
+            database.ref('tournaments').once('value')
+                .then(snapshot => {
+                    const tournaments = snapshot.val();
+                    quizList.innerHTML = '';
+                    
+                    if (!tournaments || Object.keys(tournaments).length === 0) {
+                        quizList.innerHTML = '<div style="text-align: center; padding: 20px;">No quizzes available</div>';
+                        return;
+                    }
+                    
+                    const now = new Date().getTime();
+                    let filteredTournaments = [];
+                    
+                    Object.entries(tournaments).forEach(([id, tournament]) => {
+                        const startTime = new Date(tournament.startTime).getTime();
+                        const endTime = new Date(tournament.endTime).getTime();
+                        
+                        // Determine status
+                        if (now >= startTime && now <= endTime) {
+                            tournament.status = 'live';
+                        } else if (now < startTime) {
+                            tournament.status = 'upcoming';
+                        } else {
+                            tournament.status = 'ended';
+                        }
+                        
+                        // Filter by type
+                        if (type === 'all' || tournament.status === type) {
+                            filteredTournaments.push({ id, ...tournament });
+                        }
+                    });
+                    
+                    if (filteredTournaments.length === 0) {
+                        quizList.innerHTML = `<div style="text-align: center; padding: 20px;">No ${type} quizzes</div>`;
+                        return;
+                    }
+                    
+                    // Sort by status (live first) then by start time
+                    filteredTournaments.sort((a, b) => {
+                        if (a.status === 'live' && b.status !== 'live') return -1;
+                        if (a.status !== 'live' && b.status === 'live') return 1;
+                        return new Date(a.startTime) - new Date(b.startTime);
+                    });
+                    
+                    // Render quiz cards
+                    filteredTournaments.forEach(tournament => {
+                        const quizCard = document.createElement('div');
+                        quizCard.className = `quiz-card ${tournament.status}`;
+                        
+                        const hasJoined = currentUser && currentUser.tournamentsJoined && currentUser.tournamentsJoined[tournament.id];
+                        
+                        quizCard.innerHTML = `
+                            <div class="quiz-status ${tournament.status}">${tournament.status}</div>
+                            <h3 class="quiz-title">${tournament.title}</h3>
+                            <div class="quiz-meta">
+                                <div><i class="fas fa-user"></i> ${tournament.creator || 'Admin'}</div>
+                                <div><i class="fas fa-question-circle"></i> ${tournament.totalQuestions || 15} Questions</div>
+                            </div>
+                            <div class="quiz-meta">
+                                <div><i class="fas fa-coins" style="color: gold;"></i> ${tournament.entryFee || 0} Coins</div>
+                                <div>${hasJoined ? '<i class="fas fa-check-circle" style="color: var(--success);"></i> Joined' : ''}</div>
+                            </div>
+                        `;
+                        
+                        if (tournament.status === 'live' && !hasJoined) {
+                            quizCard.addEventListener('click', () => joinQuiz(tournament));
+                        } else if (hasJoined && tournament.status === 'live') {
+                            quizCard.addEventListener('click', () => startQuiz(tournament.id));
+                        }
+                        
+                        quizList.appendChild(quizCard);
+                    });
+                })
+                .catch(error => {
+                    quizList.innerHTML = '<div style="text-align: center; padding: 20px;">Failed to load quizzes</div>';
+                });
+        }
+
+        // Join Quiz
+        function joinQuiz(tournament) {
+            if (!currentUser) {
+                showToast('Please login to join quiz', 'warning');
+                return;
+            }
+            
+            const entryFee = tournament.entryFee || 0;
+            
+            if (currentUser.coins < entryFee) {
+                showToast('Not enough coins to join this quiz', 'warning');
+                return;
+            }
+            
+            // Deduct coins and mark as joined
+            const updatedCoins = currentUser.coins - entryFee;
+            
+            database.ref('users/' + currentUser.uid).update({
+                coins: updatedCoins,
+                [`tournamentsJoined/${tournament.id}`]: true
+            })
+            .then(() => {
+                currentUser.coins = updatedCoins;
+                currentUser.tournamentsJoined = currentUser.tournamentsJoined || {};
+                currentUser.tournamentsJoined[tournament.id] = true;
+                
+                // Update UI
+                document.getElementById('userCoins').textContent = updatedCoins;
+                document.getElementById('profileCoins').textContent = updatedCoins;
+                
+                showToast(`Joined quiz: ${tournament.title}`, 'success');
+                
+                // Reload quizzes
+                const activeTab = document.querySelector('.quiz-tab.active').getAttribute('data-tab');
+                loadQuizzes(activeTab);
+            })
+            .catch(error => {
+                showToast('Failed to join quiz', 'error');
+            });
+        }
+
+        // Start Quiz
+        function startQuiz(tournamentId) {
+            if (!currentUser) {
+                showToast('Please login to start quiz', 'warning');
+                return;
+            }
+            
+            // Load quiz questions
+            database.ref('questions/' + tournamentId).once('value')
+                .then(snapshot => {
+                    const questions = snapshot.val();
+                    
+                    if (!questions || Object.keys(questions).length === 0) {
+                        showToast('No questions available for this quiz', 'warning');
+                        return;
+                    }
+                    
+                    // Reset quiz state
+                    currentQuiz = tournamentId;
+                    currentQuestionIndex = 0;
+                    quizQuestions = Object.values(questions);
+                    quizScore = 0;
+                    correctAnswersCount = 0;
+                    lifelinesUsed = {
+                        fiftyFifty: false,
+                        audiencePoll: false,
+                        skip: false
+                    };
+                    
+                    // Reset lifelines UI
+                    document.getElementById('fiftyFiftyLifeline').classList.remove('used');
+                    document.getElementById('audiencePollLifeline').classList.remove('used');
+                    document.getElementById('skipLifeline').classList.remove('used');
+                    
+                    // Hide result container
+                    resultContainer.classList.remove('active');
+                    
+                    // Show quiz container
+                    quizContainer.classList.add('active');
+                    
+                    // Load first question
+                    loadQuestion();
+                })
+                .catch(error => {
+                    showToast('Failed to load quiz questions', 'error');
+                });
+        }
+
+        // Load Question
+        function loadQuestion() {
+            if (currentQuestionIndex >= quizQuestions.length) {
+                // Quiz completed
+                showQuizResult();
+                return;
+            }
+            
+            const question = quizQuestions[currentQuestionIndex];
+            
+            // Update question number and progress
+            document.getElementById('questionNumber').textContent = `${currentQuestionIndex + 1}/${quizQuestions.length}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%`;
+            
+            // Update question text
+            document.getElementById('questionText').textContent = question.question;
+            
+            // Clear and populate options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.dataset.index = index;
+                
+                optionElement.innerHTML = `
+                    <div class="option-indicator">${String.fromCharCode(65 + index)}</div>
+                    <div>${option}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Start timer
+            startTimer();
+        }
+
+        // Select Option
+        function selectOption(index) {
+            // Clear timer
+            clearInterval(timerInterval);
+            
+            const question = quizQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            // Disable all options
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark selected option
+            options[index].classList.add('selected');
+            
+            // Check if correct
+            if (index === question.correctAnswer) {
+                options[index].classList.add('correct');
+                correctAnswersCount++;
+                quizScore += 10;
+                showToast('Correct! +10 points', 'success');
+            } else {
+                options[index].classList.add('incorrect');
+                options[question.correctAnswer].classList.add('correct');
+                showToast('Wrong answer', 'error');
+            }
+            
+            // Move to next question after delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 2000);
+        }
+
+        // Timer Functions
+        function startTimer() {
+            timeLeft = 30;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // Time's up, move to next question
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        loadQuestion();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerCircle = document.getElementById('timerCircle');
+            timerCircle.textContent = timeLeft;
+            
+            // Update circular progress
+            const percentage = (timeLeft / 30) * 100;
+            const degrees = (percentage / 100) * 360;
+            timerCircle.style.background = `conic-gradient(var(--neon-blue) ${degrees}deg, rgba(255, 255, 255, 0.1) ${degrees}deg)`;
+            
+            // Change color based on time left
+            if (timeLeft <= 10) {
+                timerCircle.style.background = `conic-gradient(var(--danger) ${degrees}deg, rgba(255, 255, 255, 0.1) ${degrees}deg)`;
+            }
+        }
+
+        // Lifeline Functions
+        function useFiftyFifty() {
+            if (lifelinesUsed.fiftyFifty) return;
+            
+            lifelinesUsed.fiftyFifty = true;
+            document.getElementById('fiftyFiftyLifeline').classList.add('used');
+            
+            const question = quizQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const correctAnswer = question.correctAnswer;
+            
+            // Hide two incorrect options
+            let hiddenCount = 0;
+            for (let i = 0; i < options.length && hiddenCount < 2; i++) {
+                if (i !== correctAnswer) {
+                    options[i].style.display = 'none';
+                    hiddenCount++;
+                }
+            }
+            
+            showToast('50:50 lifeline used', 'info');
+        }
+
+        function useAudiencePoll() {
+            if (lifelinesUsed.audiencePoll) return;
+            
+            lifelinesUsed.audiencePoll = true;
+            document.getElementById('audiencePollLifeline').classList.add('used');
+            
+            const question = quizQuestions[currentQuestionIndex];
+            const correctAnswer = question.correctAnswer;
+            
+            // Generate poll results (correct answer gets highest percentage)
+            const pollResults = [0, 0, 0, 0];
+            pollResults[correctAnswer] = 40 + Math.floor(Math.random() * 30); // 40-70%
+            
+            // Distribute remaining percentage
+            let remaining = 100 - pollResults[correctAnswer];
+            for (let i = 0; i < pollResults.length; i++) {
+                if (i !== correctAnswer) {
+                    const percentage = Math.min(remaining, Math.floor(Math.random() * 30) + 5);
+                    pollResults[i] = percentage;
+                    remaining -= percentage;
+                }
+            }
+            
+            // Add remaining percentage to a random option
+            if (remaining > 0) {
+                for (let i = 0; i < pollResults.length; i++) {
+                    if (i !== correctAnswer) {
+                        pollResults[i] += remaining;
+                        break;
+                    }
+                }
+            }
+            
+            // Show poll results
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                const pollBar = document.createElement('div');
+                pollBar.style.position = 'absolute';
+                pollBar.style.bottom = '0';
+                pollBar.style.left = '0';
+                pollBar.style.height = '5px';
+                pollBar.style.width = `${pollResults[index]}%`;
+                pollBar.style.backgroundColor = index === correctAnswer ? 'var(--success)' : 'var(--text-secondary)';
+                pollBar.style.borderRadius = '0 0 10px 10px';
+                option.style.position = 'relative';
+                option.appendChild(pollBar);
+                
+                const pollText = document.createElement('div');
+                pollText.style.position = 'absolute';
+                pollText.style.top = '5px';
+                pollText.style.right = '10px';
+                pollText.style.fontSize = '12px';
+                pollText.style.color = 'var(--text-secondary)';
+                pollText.textContent = `${pollResults[index]}%`;
+                option.appendChild(pollText);
+            });
+            
+            showToast('Audience poll lifeline used', 'info');
+        }
+
+        function useSkip() {
+            if (lifelinesUsed.skip) return;
+            
+            lifelinesUsed.skip = true;
+            document.getElementById('skipLifeline').classList.add('used');
+            
+            // Clear timer
+            clearInterval(timerInterval);
+            
+            // Move to next question
+            currentQuestionIndex++;
+            loadQuestion();
+            
+            showToast('Skip lifeline used', 'info');
+        }
+
+        // Show Quiz Result
+        function showQuizResult() {
+            // Clear timer
+            clearInterval(timerInterval);
+            
+            // Calculate coins earned (1 coin per point)
+            const coinsEarned = quizScore;
+            
+            // Update user data
+            const updatedScore = (currentUser.totalScore || 0) + quizScore;
+            const updatedCoins = (currentUser.coins || 0) + coinsEarned;
+            
+            database.ref('users/' + currentUser.uid).update({
+                totalScore: updatedScore,
+                coins: updatedCoins
+            })
+            .then(() => {
+                currentUser.totalScore = updatedScore;
+                currentUser.coins = updatedCoins;
+                
+                // Update UI
+                document.getElementById('userCoins').textContent = updatedCoins;
+                document.getElementById('userScore').textContent = updatedScore;
+                document.getElementById('profileCoins').textContent = updatedCoins;
+                document.getElementById('profileScore').textContent = updatedScore;
+                
+                // Show result
+                document.getElementById('correctAnswers').textContent = correctAnswersCount;
+                document.getElementById('totalScore').textContent = quizScore;
+                document.getElementById('coinsEarned').textContent = coinsEarned;
+                
+                // Calculate rank (simplified)
+                document.getElementById('rank').textContent = Math.floor(Math.random() * 100) + 1;
+                
+                // Show result container
+                resultContainer.classList.add('active');
+            })
+            .catch(error => {
+                showToast('Error updating score', 'error');
+            });
+        }
+
+        // Share Result
+        function shareResult() {
+            const shareText = `I scored ${quizScore} points in the KBC Quiz Arena! Can you beat my score?`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'KBC Quiz Arena Result',
+                    text: shareText,
+                    url: window.location.href
+                })
+                .then(() => {
+                    showToast('Result shared successfully', 'success');
+                })
+                .catch(error => {
+                    showToast('Error sharing result', 'error');
+                });
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(shareText)
+                    .then(() => {
+                        showToast('Result copied to clipboard', 'success');
+                    })
+                    .catch(error => {
+                        showToast('Error copying result', 'error');
+                    });
+            }
+        }
+
+        // Load Leaderboard
+        function loadLeaderboard(type) {
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '<div class="spinner"></div>';
+            
+            let ref;
+            if (type === 'global') {
+                ref = database.ref('leaderboard/global').orderByChild('score').limitToLast(50);
+            } else {
+                ref = database.ref('leaderboard/tournament').orderByChild('score').limitToLast(50);
+            }
+            
+            ref.once('value')
+                .then(snapshot => {
+                    const leaderboard = snapshot.val();
+                    leaderboardList.innerHTML = '';
+                    
+                    if (!leaderboard || Object.keys(leaderboard).length === 0) {
+                        leaderboardList.innerHTML = '<div style="text-align: center; padding: 20px;">No leaderboard data available</div>';
+                        return;
+                    }
+                    
+                    // Convert to array and sort by score (descending)
+                    const leaderboardArray = Object.entries(leaderboard).map(([uid, data]) => ({
+                        uid,
+                        ...data
+                    }));
+                    
+                    leaderboardArray.sort((a, b) => b.score - a.score);
+                    
+                    // Render leaderboard items
+                    leaderboardArray.forEach((user, index) => {
+                        const leaderboardItem = document.createElement('div');
+                        leaderboardItem.className = 'leaderboard-item';
+                        
+                        let rankClass = '';
+                        if (index === 0) rankClass = 'gold';
+                        else if (index === 1) rankClass = 'silver';
+                        else if (index === 2) rankClass = 'bronze';
+                        
+                        leaderboardItem.innerHTML = `
+                            <div class="leaderboard-rank ${rankClass}">${index + 1}</div>
+                            <img src="${user.avatarURL || `https://picsum.photos/seed/${user.uid}/50/50.jpg`}" alt="Avatar" class="leaderboard-avatar">
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">
+                                    ${user.name}
+                                    ${user.isPremium ? '<span class="premium-badge">👑</span>' : ''}
+                                </div>
+                                <div style="font-size: 14px; color: var(--text-secondary);">${user.email}</div>
+                            </div>
+                            <div class="leaderboard-score">${user.score}</div>
+                        `;
+                        
+                        leaderboardList.appendChild(leaderboardItem);
+                    });
+                })
+                .catch(error => {
+                    leaderboardList.innerHTML = '<div style="text-align: center; padding: 20px;">Failed to load leaderboard</div>';
+                });
+        }
+
+        // Load Transaction History
+        function loadTransactionHistory() {
+            const transactionList = document.getElementById('transactionList');
+            transactionList.innerHTML = '<div class="spinner"></div>';
+            
+            database.ref('transactions/' + currentUser.uid).orderByChild('timestamp').limitToLast(20).once('value')
+                .then(snapshot => {
+                    const transactions = snapshot.val();
+                    transactionList.innerHTML = '';
+                    
+                    if (!transactions || Object.keys(transactions).length === 0) {
+                        transactionList.innerHTML = '<div style="text-align: center; padding: 20px;">No transactions yet</div>';
+                        return;
+                    }
+                    
+                    // Convert to array and sort by timestamp (descending)
+                    const transactionArray = Object.entries(transactions).map(([id, data]) => ({
+                        id,
+                        ...data
+                    }));
+                    
+                    transactionArray.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    // Render transaction items
+                    transactionArray.forEach(transaction => {
+                        const transactionItem = document.createElement('div');
+                        transactionItem.className = 'transaction-item';
+                        
+                        const date = new Date(transaction.timestamp).toLocaleDateString();
+                        const amountClass = transaction.type === 'credit' ? 'credit' : 'debit';
+                        const amountPrefix = transaction.type === 'credit' ? '+' : '-';
+                        
+                        transactionItem.innerHTML = `
+                            <div class="transaction-info">
+                                <div class="transaction-title">${transaction.description}</div>
+                                <div class="transaction-date">${date}</div>
+                            </div>
+                            <div class="transaction-amount ${amountClass}">${amountPrefix}${transaction.amount} Coins</div>
+                        `;
+                        
+                        transactionList.appendChild(transactionItem);
+                    });
+                })
+                .catch(error => {
+                    transactionList.innerHTML = '<div style="text-align: center; padding: 20px;">Failed to load transactions</div>';
+                });
+        }
+
+        // Save Profile
+        function saveProfile() {
+            const name = document.getElementById('editName').value;
+            const avatarURL = document.getElementById('editAvatar').value;
+            const theme = document.getElementById('editTheme').value;
+            
+            if (!name) {
+                showToast('Name cannot be empty', 'warning');
+                return;
+            }
+            
+            database.ref('users/' + currentUser.uid).update({
+                name: name,
+                avatarURL: avatarURL,
+                theme: theme
+            })
+            .then(() => {
+                currentUser.name = name;
+                currentUser.avatarURL = avatarURL;
+                currentUser.theme = theme;
+                
+                // Update UI
+                document.getElementById('userName').textContent = name;
+                document.getElementById('profileName').textContent = name;
+                document.getElementById('userAvatar').src = avatarURL || `https://picsum.photos/seed/${currentUser.uid}/40/40.jpg`;
+                document.getElementById('profileAvatar').src = avatarURL || `https://picsum.photos/seed/${currentUser.uid}/120/120.jpg`;
+                
+                showToast('Profile updated successfully', 'success');
+            })
+            .catch(error => {
+                showToast('Error updating profile', 'error');
+            });
+        }
+
+        // Load Premium QR
+        function loadPremiumQR() {
+            database.ref('config/premiumQR').once('value')
+                .then(snapshot => {
+                    const qrCode = snapshot.val();
+                    const qrCodeElement = document.getElementById('qrCode');
+                    
+                    if (qrCode) {
+                        qrCodeElement.innerHTML = `<img src="${qrCode}" alt="Premium QR Code" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;">`;
+                    } else {
+                        qrCodeElement.innerHTML = 'QR Code not available';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('qrCode').innerHTML = 'Failed to load QR Code';
+                });
+        }
+
+        // Submit Premium Request
+        function submitPremiumRequest() {
+            const transactionId = document.getElementById('upiTransactionId').value;
+            
+            if (!transactionId) {
+                showToast('Please enter UPI Transaction ID', 'warning');
+                return;
+            }
+            
+            // Check if already requested or premium
+            if (currentUser.isPremium) {
+                showToast('You already have Premium', 'info');
+                premiumModal.classList.remove('active');
+                return;
+            }
+            
+            database.ref('premiumRequests/' + currentUser.uid).once('value')
+                .then(snapshot => {
+                    const existingRequest = snapshot.val();
+                    
+                    if (existingRequest && existingRequest.status === 'pending') {
+                        showToast('Premium request already pending', 'warning');
+                        return;
+                    }
+                    
+                    // Create new request
+                    database.ref('premiumRequests/' + currentUser.uid).set({
+                        uid: currentUser.uid,
+                        txnId: transactionId,
+                        amount: 199,
+                        status: 'pending',
+                        timestamp: new Date().toISOString()
+                    })
+                    .then(() => {
+                        showToast('Premium request submitted for verification', 'success');
+                        premiumModal.classList.remove('active');
+                        document.getElementById('upiTransactionId').value = '';
+                    })
+                    .catch(error => {
+                        showToast('Error submitting premium request', 'error');
+                    });
+                })
+                .catch(error => {
+                    showToast('Error checking premium status', 'error');
+                });
+        }
+
+        // Submit Withdraw Request
+        function submitWithdrawRequest() {
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            const upiId = document.getElementById('withdrawUPI').value;
+            
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount', 'warning');
+                return;
+            }
+            
+            if (!upiId) {
+                showToast('Please enter your UPI ID', 'warning');
+                return;
+            }
+            
+            if (amount > currentUser.coins) {
+                showToast('Insufficient balance', 'warning');
+                return;
+            }
+            
+            // Check if already has pending request
+            database.ref('withdrawalRequests/' + currentUser.uid).once('value')
+                .then(snapshot => {
+                    const existingRequest = snapshot.val();
+                    
+                    if (existingRequest && existingRequest.status === 'pending') {
+                        showToast('Withdrawal request already pending', 'warning');
+                        return;
+                    }
+                    
+                    // Create new request
+                    database.ref('withdrawalRequests/' + currentUser.uid).set({
+                        uid: currentUser.uid,
+                        amount: amount,
+                        upiId: upiId,
+                        status: 'pending',
+                        timestamp: new Date().toISOString()
+                    })
+                    .then(() => {
+                        showToast('Withdrawal request submitted', 'success');
+                        withdrawModal.classList.remove('active');
+                        document.getElementById('withdrawAmount').value = '';
+                        document.getElementById('withdrawUPI').value = '';
+                    })
+                    .catch(error => {
+                        showToast('Error submitting withdrawal request', 'error');
+                    });
+                })
+                .catch(error => {
+                    showToast('Error checking withdrawal status', 'error');
+                });
+        }
+
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '';
+            switch (type) {
+                case 'success':
+                    icon = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    icon = 'fas fa-exclamation-circle';
+                    break;
+                case 'warning':
+                    icon = 'fas fa-exclamation-triangle';
+                    break;
+                default:
+                    icon = 'fas fa-info-circle';
+            }
+            
+            toast.innerHTML = `
+                <i class="${icon}"></i>
+                <div class="toast-message">${message}</div>
+                <div class="toast-close"><i class="fas fa-times"></i></div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 5000);
+            
+            // Manual close
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
+        }
+
+        // Auth State Observer
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadUserData(user);
+            } else {
+                authContainer.style.display = 'flex';
+                appContainer.style.display = 'none';
+                currentUser = null;
+            }
+        });
+
+        // Initialize sample data for demo purposes
+        function initializeSampleData() {
+            // Sample tournaments
+            const tournaments = {
+                tournament1: {
+                    title: "General Knowledge Challenge",
+                    description: "Test your general knowledge",
+                    entryFee: 10,
+                    totalQuestions: 15,
+                    creator: "Admin",
+                    startTime: new Date().toISOString(),
+                    endTime: new Date(Date.now() + 3600000).toISOString() // 1 hour from now
+                },
+                tournament2: {
+                    title: "Science Quiz",
+                    description: "Explore the world of science",
+                    entryFee: 20,
+                    totalQuestions: 15,
+                    creator: "Admin",
+                    startTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
+                    endTime: new Date(Date.now() + 7200000).toISOString() // 2 hours from now
+                },
+                tournament3: {
+                    title: "History Trivia",
+                    description: "Journey through time",
+                    entryFee: 15,
+                    totalQuestions: 15,
+                    creator: "Admin",
+                    startTime: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
+                    endTime: new Date(Date.now() - 3600000).toISOString() // 1 hour ago
+                }
+            };
+            
+            // Sample questions
+            const questions = {
+                tournament1: [
+                    {
+                        question: "What is the capital of France?",
+                        options: ["London", "Berlin", "Paris", "Madrid"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Geography"
+                    },
+                    {
+                        question: "Who painted the Mona Lisa?",
+                        options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Michelangelo"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Art"
+                    },
+                    {
+                        question: "What is the largest planet in our solar system?",
+                        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Science"
+                    },
+                    {
+                        question: "When did World War II end?",
+                        options: ["1943", "1944", "1945", "1946"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "History"
+                    },
+                    {
+                        question: "What is the smallest country in the world?",
+                        options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "Geography"
+                    },
+                    {
+                        question: "Who wrote 'Romeo and Juliet'?",
+                        options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Literature"
+                    },
+                    {
+                        question: "What is the chemical symbol for gold?",
+                        options: ["Go", "Gd", "Au", "Ag"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Science"
+                    },
+                    {
+                        question: "How many continents are there?",
+                        options: ["5", "6", "7", "8"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Geography"
+                    },
+                    {
+                        question: "Who was the first person to walk on the moon?",
+                        options: ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "John Glenn"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Science"
+                    },
+                    {
+                        question: "What is the longest river in the world?",
+                        options: ["Amazon", "Nile", "Mississippi", "Yangtze"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "Geography"
+                    },
+                    {
+                        question: "Who invented the telephone?",
+                        options: ["Thomas Edison", "Alexander Graham Bell", "Nikola Tesla", "Benjamin Franklin"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Science"
+                    },
+                    {
+                        question: "What is the capital of Japan?",
+                        options: ["Seoul", "Beijing", "Tokyo", "Bangkok"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Geography"
+                    },
+                    {
+                        question: "Who wrote 'To Kill a Mockingbird'?",
+                        options: ["Harper Lee", "J.K. Rowling", "Stephen King", "Ernest Hemingway"],
+                        correctAnswer: 0,
+                        difficulty: "medium",
+                        category: "Literature"
+                    },
+                    {
+                        question: "What is the largest ocean on Earth?",
+                        options: ["Atlantic", "Indian", "Arctic", "Pacific"],
+                        correctAnswer: 3,
+                        difficulty: "easy",
+                        category: "Geography"
+                    },
+                    {
+                        question: "How many bones are in the human body?",
+                        options: ["186", "206", "226", "246"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "Science"
+                    }
+                ],
+                tournament2: [
+                    {
+                        question: "What is the speed of light?",
+                        options: ["299,792 km/s", "199,792 km/s", "399,792 km/s", "499,792 km/s"],
+                        correctAnswer: 0,
+                        difficulty: "hard",
+                        category: "Physics"
+                    },
+                    {
+                        question: "What is the chemical formula for water?",
+                        options: ["H2O", "CO2", "O2", "H2O2"],
+                        correctAnswer: 0,
+                        difficulty: "easy",
+                        category: "Chemistry"
+                    },
+                    {
+                        question: "What is the powerhouse of the cell?",
+                        options: ["Nucleus", "Mitochondria", "Ribosome", "Chloroplast"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Biology"
+                    },
+                    {
+                        question: "What is the largest bone in the human body?",
+                        options: ["Skull", "Femur", "Humerus", "Tibia"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "Biology"
+                    },
+                    {
+                        question: "What is the smallest unit of matter?",
+                        options: ["Molecule", "Atom", "Proton", "Quark"],
+                        correctAnswer: 3,
+                        difficulty: "hard",
+                        category: "Physics"
+                    },
+                    {
+                        question: "What is the process by which plants make their own food?",
+                        options: ["Respiration", "Photosynthesis", "Transpiration", "Digestion"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Biology"
+                    },
+                    {
+                        question: "What is the chemical symbol for oxygen?",
+                        options: ["O", "Ox", "O2", "Oxg"],
+                        correctAnswer: 0,
+                        difficulty: "easy",
+                        category: "Chemistry"
+                    },
+                    {
+                        question: "What is the force that opposes motion between two surfaces in contact?",
+                        options: ["Gravity", "Friction", "Magnetism", "Tension"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Physics"
+                    },
+                    {
+                        question: "What is the study of earthquakes called?",
+                        options: ["Meteorology", "Seismology", "Geology", "Volcanology"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "Earth Science"
+                    },
+                    {
+                        question: "What is the process of converting a liquid into a gas called?",
+                        options: ["Condensation", "Evaporation", "Sublimation", "Deposition"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Chemistry"
+                    },
+                    {
+                        question: "What is the largest organ in the human body?",
+                        options: ["Heart", "Liver", "Brain", "Skin"],
+                        correctAnswer: 3,
+                        difficulty: "easy",
+                        category: "Biology"
+                    },
+                    {
+                        question: "What is the SI unit of force?",
+                        options: ["Joule", "Watt", "Newton", "Pascal"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "Physics"
+                    },
+                    {
+                        question: "What is the chemical symbol for sodium?",
+                        options: ["Na", "S", "So", "N"],
+                        correctAnswer: 0,
+                        difficulty: "easy",
+                        category: "Chemistry"
+                    },
+                    {
+                        question: "What is the process by which a solid changes directly into a gas without passing through the liquid state called?",
+                        options: ["Evaporation", "Condensation", "Sublimation", "Deposition"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "Chemistry"
+                    },
+                    {
+                        question: "What is the study of fossils called?",
+                        options: ["Paleontology", "Archaeology", "Anthropology", "Geology"],
+                        correctAnswer: 0,
+                        difficulty: "medium",
+                        category: "Earth Science"
+                    }
+                ],
+                tournament3: [
+                    {
+                        question: "In which year did World War I begin?",
+                        options: ["1912", "1913", "1914", "1915"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "World History"
+                    },
+                    {
+                        question: "Who was the first President of the United States?",
+                        options: ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "American History"
+                    },
+                    {
+                        question: "Which ancient wonder of the world still stands today?",
+                        options: ["Colossus of Rhodes", "Hanging Gardens of Babylon", "Great Pyramid of Giza", "Lighthouse of Alexandria"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Ancient History"
+                    },
+                    {
+                        question: "In which year did the Berlin Wall fall?",
+                        options: ["1987", "1988", "1989", "1990"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "Modern History"
+                    },
+                    {
+                        question: "Who was known as the 'Iron Lady'?",
+                        options: ["Queen Elizabeth II", "Margaret Thatcher", "Angela Merkel", "Indira Gandhi"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "Modern History"
+                    },
+                    {
+                        question: "Which empire was known as 'the empire on which the sun never sets'?",
+                        options: ["Roman Empire", "Ottoman Empire", "British Empire", "Mongol Empire"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "World History"
+                    },
+                    {
+                        question: "Who wrote the 'I Have a Dream' speech?",
+                        options: ["Malcolm X", "Martin Luther King Jr.", "Rosa Parks", "Nelson Mandela"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Modern History"
+                    },
+                    {
+                        question: "In which year did Christopher Columbus reach the Americas?",
+                        options: ["1490", "1491", "1492", "1493"],
+                        correctAnswer: 2,
+                        difficulty: "easy",
+                        category: "Exploration"
+                    },
+                    {
+                        question: "Who was the first Emperor of Rome?",
+                        options: ["Julius Caesar", "Augustus", "Nero", "Marcus Aurelius"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "Ancient History"
+                    },
+                    {
+                        question: "Which treaty ended World War I?",
+                        options: ["Treaty of Versailles", "Treaty of Paris", "Treaty of Tordesillas", "Treaty of Westphalia"],
+                        correctAnswer: 0,
+                        difficulty: "medium",
+                        category: "World History"
+                    },
+                    {
+                        question: "Who was the leader of the Soviet Union during World War II?",
+                        options: ["Vladimir Lenin", "Joseph Stalin", "Nikita Khrushchev", "Mikhail Gorbachev"],
+                        correctAnswer: 1,
+                        difficulty: "medium",
+                        category: "World History"
+                    },
+                    {
+                        question: "In which year did the American Civil War end?",
+                        options: ["1863", "1864", "1865", "1866"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "American History"
+                    },
+                    {
+                        question: "Who was the first female Prime Minister of the United Kingdom?",
+                        options: ["Theresa May", "Margaret Thatcher", "Liz Truss", "Boris Johnson"],
+                        correctAnswer: 1,
+                        difficulty: "easy",
+                        category: "Modern History"
+                    },
+                    {
+                        question: "Which ancient civilization built Machu Picchu?",
+                        options: ["Aztecs", "Mayans", "Incas", "Olmecs"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "Ancient History"
+                    },
+                    {
+                        question: "In which year did the French Revolution begin?",
+                        options: ["1787", "1788", "1789", "1790"],
+                        correctAnswer: 2,
+                        difficulty: "medium",
+                        category: "World History"
+                    }
+                ]
+            };
+            
+            // Sample announcements
+            const announcements = {
+                announcement1: "🎉 New quiz tournament starting tomorrow! Join now to earn extra coins!",
+                announcement2: "💎 Premium users get access to exclusive quizzes with higher rewards!",
+                announcement3: "🏆 Weekly leaderboard winners will receive special prizes!"
+            };
+            
+            // Sample config
+            const config = {
+                premiumQR: "https://picsum.photos/seed/qr/200/200.jpg",
+                timerDuration: 30,
+                coinToRupeeRatio: 100
+            };
+            
+            // Save sample data to Firebase
+            database.ref('tournaments').set(tournaments);
+            database.ref('questions').set(questions);
+            database.ref('config/announcements').set(announcements);
+            database.ref('config').set(config);
+        }
+
+        // Initialize sample data on page load (for demo purposes)
+        window.addEventListener('load', () => {
+            // Comment this out in production
+            // initializeSampleData();
+        });
+    </script>
+</body>
+</html>
